@@ -1,8 +1,8 @@
 from flask import Flask, request,jsonify
 from app import crud,services
-
+from flask_cors import CORS
 app = Flask(__name__)
-
+CORS(app)
 @app.route("/users/create",methods=["POST"])
 def create_user():
     try:
@@ -73,12 +73,22 @@ def login_user():
         response = crud.get_user_by_email(email)
         
         if not response:
-            return jsonify({"error":f"user with {email} does not exist in database"}),404   
-        if services.check_password(password, response[0].to_dict()["password"]):
-            return jsonify({"message":"user has successfully logged in"}),200
-        else:
-            return jsonify({"error":"user email or password is not valid"}),401
+            return jsonify({"error":f"User with {email} does not exist in database"}),404
 
+        user = response[0].to_dict()   
+        if not services.check_password(password, user["password"]):
+            return jsonify({"error":"User email or password is not valid"}),401
+        
+        token = services.generate_jwt({
+            "user_id": response[0].id,
+            "email": email
+        })
+        return jsonify({
+                "message":"User has logged in successfully",
+                "status":200,
+                "token":token
+                }),200
+ 
     except Exception as error:
         return jsonify({"error":f"{error}"}),500
 

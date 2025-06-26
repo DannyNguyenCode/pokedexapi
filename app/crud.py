@@ -6,7 +6,7 @@ def create_user(data):
     doc_ref.set(data)
 
     return {
-        "message":f"user has been created",
+        "message":f"User has registered successfully",
         "id":f"{doc_ref.id}",
         "email":f"{email}"
         }
