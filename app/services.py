@@ -33,7 +33,7 @@ def verify_token(id_token):
         return None
     
 def generate_jwt(payload, expires_in_minutes=60):
-    payload["exp"] = datetime.datetime.utcnow() + datetime.timedelta(minutes=expires_in_minutes)
+    payload["exp"] = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=expires_in_minutes)
     token = jwt.encode(payload,SECRET_KEY, algorithm="HS256")
     return token
 

@@ -1,5 +1,5 @@
 from app.db import db
-
+from google.cloud.firestore_v1 import FieldFilter
 def create_user(data):
     email = data["email"].lower()
     doc_ref = db.collection('users').document()
@@ -29,5 +29,5 @@ def delete_user(id:str):
     return {"message":f"user has been deleted"}
 
 def get_user_by_email(email:str):
-    docs = db.collection("users").where("email","==",email.lower()).get()
+    docs = db.collection("users").where(filter=FieldFilter("email","==",email.lower())).get()
     return docs

@@ -22,7 +22,7 @@ def test_create_user(mocker):
 
     result = crud.create_user(data)
 
-    assert result["message"] == "user has been created"
+    assert result["message"] == "User has registered successfully"
     assert result["id"] == "doc123"
     assert result["email"] == "test@example.com"
     fake_doc.set.assert_called_once_with(data)

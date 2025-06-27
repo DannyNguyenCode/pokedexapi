@@ -1,8 +1,12 @@
 from flask import Flask, request,jsonify
 from app import crud,services
 from flask_cors import CORS
+from app.timing import before, after
 app = Flask(__name__)
 CORS(app)
+app.before_request(before)
+app.after_request(after)
+
 @app.route("/users/create",methods=["POST"])
 def create_user():
     try:
