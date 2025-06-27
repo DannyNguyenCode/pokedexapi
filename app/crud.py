@@ -31,3 +31,4 @@ def delete_user(id:str):
 def get_user_by_email(email:str):
     docs = db.collection("users").where(filter=FieldFilter("email","==",email.lower())).get()
     return docs
+
