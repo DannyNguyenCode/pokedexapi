@@ -91,7 +91,10 @@ def login_user():
                 "message":"User has logged in successfully",
                 "status":200,
                 "token":token,
-                "id":response[0].id
+                "data":{
+                    "id":user['id'],
+                    "email":user['email'],      
+                }
                 }),200
  
     except Exception as error:
