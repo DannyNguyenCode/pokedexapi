@@ -1,19 +1,23 @@
 from app.db import db
 from google.cloud.firestore_v1 import FieldFilter
 def create_user(data):
-    email = data["email"].lower()
+    email = data.get("email", "").lower()
+    if not email:
+        raise ValueError("Email is required")
+    data["email"] = email
+
     doc_ref = db.collection('users').document()
-    user_uid = {
-        'id': doc_ref.id
-    }
+    user_uid = {'id': doc_ref.id}
     full_data = user_uid | data
+
     doc_ref.set(full_data)
 
     return {
-        "message":f"User has registered successfully",
-        "id":f"{doc_ref.id}",
-        "email":f"{email}"
-        }
+        "message": "User has registered successfully",
+        "id": doc_ref.id,
+        "email": email
+    }
+
 
 def list_users():
     docs = db.collection('users').get()
