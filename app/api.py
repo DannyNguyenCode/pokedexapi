@@ -43,7 +43,7 @@ def get_user_by_id(id):
     except Exception as error:
         return jsonify({"error":f"{error}"}),500
     
-@app.route("/users/<string:id>",methods=["PUT"])
+@app.route("/users/<string:id>/update",methods=["PUT"])
 def update_user(id):
     try:
         doc = crud.get_user_by_id(id)
@@ -56,7 +56,7 @@ def update_user(id):
     except Exception as error:
         return jsonify({"error":f"{error}"}),500
     
-@app.route("/users/<string:id>",methods=["DELETE"])
+@app.route("/users/<string:id>/delete",methods=["DELETE"])
 def delete_user(id):
     try:
         doc = crud.get_user_by_id(id)
@@ -90,7 +90,8 @@ def login_user():
         return jsonify({
                 "message":"User has logged in successfully",
                 "status":200,
-                "token":token
+                "token":token,
+                "id":response[0].id
                 }),200
  
     except Exception as error:
@@ -121,5 +122,31 @@ def verify_token():
             "uid": uid,
             "provider":provider
             }),200
+    except Exception as error:
+        return jsonify({"error":f"{error}"}),500
+    
+@app.route("/pokemon/add_pokemon",methods=["POST"])
+def add_pokemon_to_collection():
+    try:
+        data = request.get_json()
+        owner_id = data.get('owner_id')
+        pokemon_id=data.get('id')
+        
+        pokemon_docs = crud.get_pokemons_by_user_id(owner_id)
+        matching_snap = next((snap for snap in pokemon_docs if (snap.to_dict() or {}).get("id") == pokemon_id),None)
+       
+        if matching_snap:
+            return jsonify({"error":f"user already has pokemon in collection"}),409
+        response = crud.add_pokemon_to_user_collection(owner_id,data)
+
+        return jsonify(response),201
+    except Exception as error:
+        return jsonify({"error":f"{error}"}),500
+    
+@app.route("/pokemon/<string:user_id>/<int:pokemon_id>/delete_pokemon",methods=["DELETE"])
+def remove_pokemon_from_collection(user_id,pokemon_id):
+    try:
+        response = crud.remove_pokemon_from_user_collection(user_id,pokemon_id)
+        return jsonify(response),200
     except Exception as error:
         return jsonify({"error":f"{error}"}),500
