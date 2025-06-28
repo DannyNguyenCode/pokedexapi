@@ -145,7 +145,15 @@ def add_pokemon_to_collection():
         return jsonify(response),201
     except Exception as error:
         return jsonify({"error":f"{error}"}),500
-    
+
+@app.route("/pokemon/<string:owner_id>",methods=["GET"])
+def get_user_pokemon_list(owner_id:str):
+    try:
+        response = crud.get_pokemons_by_user_id(owner_id)
+        return jsonify([res.to_dict() for res in response]),200
+    except Exception as error:
+        return jsonify({"error":f"{error}"}),500 
+
 @app.route("/pokemon/<string:user_id>/<int:pokemon_id>/delete_pokemon",methods=["DELETE"])
 def remove_pokemon_from_collection(user_id,pokemon_id):
     try:
